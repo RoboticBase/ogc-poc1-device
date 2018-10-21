@@ -9,13 +9,13 @@ import argparse
 parser = argparse.ArgumentParser(prog="entrance_button.py", description="Button controller in destination", add_help = True)
 parser.add_argument("--host", help="MQTT Address(Default:localhost)", default = 'localhost')
 parser.add_argument("--port", type=int, help="MQTT Port(Default:1883)", default = 1883)
-parser.add_argument("--ssl", help="Use SSL connection(Default:False)", action = 'use_ssl')
+parser.add_argument("--ssl", help="Use SSL connection(Default:False)", action = 'store_true')
 parser.add_argument("--key_file", help="Use SSL connection(Default:./ssl/DST_Root_CA_X3.pem)", default = './ssl/DST_Root_CA_X3.pem')
 parser.add_argument("--device_id", help="(Default:button_sensor_0000000000000001)", required = True)
 args = parser.parse_args()
 print("Connecting to " + args.host + ":" + str(args.port))
 if args.ssl:
-    print("SSL:" + args.key_file))
+    print("SSL:" + args.key_file)
 
 ######################
 ### MQTT Parameter ###
