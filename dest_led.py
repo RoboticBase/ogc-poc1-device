@@ -120,12 +120,12 @@ def on_message(client, userdata, message):
         print('light on!!')
         colorWipe(strip, Color(0, 0, 255), 10)
         time.sleep(0.5)
-        client.publish(topic_pub, 'dest_led_0000000000000001@action|success')
+        client.publish(topic_pub, str(device_id)+'@action|success')
     elif s[-1] == 'off':
         print('light off!!')
         colorWipe(strip, Color(0,0,0), 10)
         time.sleep(0.5)
-        client.publish(topic_pub, 'dest_led_0000000000000001@action|success')
+        client.publish(topic_pub, str(device_id)+'@action|success')
     else:
         print(s[-1])
         print('The message is none')
