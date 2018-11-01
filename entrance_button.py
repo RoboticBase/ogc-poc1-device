@@ -6,40 +6,52 @@ import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
 import argparse
 
-parser = argparse.ArgumentParser(prog="entrance_button.py", description="Button controller in destination", add_help = True)
-parser.add_argument("--host", help="MQTT Address(Default:localhost)", default = 'localhost')
-parser.add_argument("--port", type=int, help="MQTT Port(Default:1883)", default = 1883)
-parser.add_argument("--ssl", help="Use SSL connection(Default:False)", action = 'store_true')
-parser.add_argument("--key_file", help="Use SSL connection(Default:./ssl/DST_Root_CA_X3.pem)", default = './ssl/DST_Root_CA_X3.pem')
-parser.add_argument("--device_id", help="(Default:button_sensor_0000000000000001)", required = True)
+parser = argparse.ArgumentParser(description="Button controller in entrance")
+parser.add_argument("--host",
+                    help="MQTT Address(Default:localhost)",
+                    default='localhost')
+parser.add_argument("--port",
+                    type=int,
+                    help="MQTT Port(Default:1883)",
+                    default=1883)
+parser.add_argument("--ssl",
+                    help="Use SSL connection",
+                    action='store_true')
+parser.add_argument("--key_file",
+                    help="Select the SSL keyfile")
+parser.add_argument("--device_id",
+                    help="Device ID",
+                    required=True)
 args = parser.parse_args()
 print("Connecting to " + args.host + ":" + str(args.port))
 if args.ssl:
     print("SSL:" + args.key_file)
 
 ######################
-### MQTT Parameter ###
+#   MQTT Parameter   #
 ######################
-host=args.host
-port=args.port
-device_id=args.device_id
-topic='/button_sensor/'+str(device_id)+'/attrs'
-username='button_sensor'
-password='button_sensor_0GC'
-cacrt=args.key_file
+host = args.host
+port = args.port
+device_id = args.device_id
+topic = '/button_sensor/'+str(device_id)+'/attrs'
+username = 'button_sensor'
+password = 'button_sensor_0GC'
+cacrt = args.key_file
 client = mqtt.Client(protocol=mqtt.MQTTv311)
 Connected = False
 
 ########################
-### Sensor Parameter ###
+#   Sensor Parameter   #
 ########################
 LED_PIN = 26
 BTN_PIN = 5
 Pushed = False
 
 ######################
-### MQTT Functions ###
+#   MQTT Functions   #
 ######################
+
+
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print('Connected')
@@ -48,15 +60,18 @@ def on_connect(client, userdata, flags, rc):
     elif rc == 1:
         print('Connection Failed')
 
-def on_disconnect(client, userdata,rc=0):
+
+def on_disconnect(client, userdata, rc=0):
     global Connected
     Connected = False
     print('network is disconnect')
     client.loop_stop()
 
+
 def sensor():
     if GPIO.input(BTN_PIN) == GPIO.HIGH:
-        date = datetime.datetime.now().replace(tzinfo=datetime.timezone(datetime.timedelta(hours=9))).isoformat()
+        tzinfo = datetime.timezone(datetime.timedelta(hours=9))
+        date = datetime.datetime.now().replace(tzinfo).isoformat()
         payload = date+'|state|on'
         client.publish(topic, payload)
         print("pushed")
@@ -72,20 +87,22 @@ def setup():
     GPIO.setup(BTN_PIN, GPIO.IN)
     if args.ssl:
         client.username_pw_set(username, password=password)
-        client.tls_set(cacrt, tls_version = ssl.PROTOCOL_TLSv1_1)
+        client.tls_set(cacrt, tls_version=ssl.PROTOCOL_TLSv1_1)
         client.tls_insecure_set(True)
     client.on_connect = on_connect
-    client.on_disconnect= on_disconnect
+    client.on_disconnect = on_disconnect
+
 
 def main():
     global Connected
     print('mosquitto_sub -t ' + topic)
     client.connect(host, port=port, keepalive=60)
     client.loop_start()
-    while Connected != True:
+    while not Connected:
         time.sleep(1)
     while True:
         sensor()
+
 
 if __name__ == '__main__':
     setup()
