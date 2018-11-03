@@ -71,7 +71,7 @@ def on_disconnect(client, userdata, rc=0):
 def sensor():
     if GPIO.input(BTN_PIN) == GPIO.HIGH:
         tzinfo = datetime.timezone(datetime.timedelta(hours=9))
-        date = datetime.datetime.now().replace(tzinfo).isoformat()
+        date = datetime.datetime.now().replace(tzinfo=tzinfo).isoformat()
         payload = date+'|state|on'
         client.publish(topic, payload)
         print("pushed")
