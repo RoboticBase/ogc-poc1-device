@@ -16,8 +16,17 @@ parser.add_argument("--port",
 parser.add_argument("--ssl",
                     help="Use SSL connection",
                     action='store_true')
+parser.add_argument("--username",
+                    help="MQTT Username",
+                    default='')
+parser.add_argument("--password",
+                    help="MQTT Password",
+                    default='')
 parser.add_argument("--key_file",
                     help="Select the SSL keyfile")
+parser.add_argument("--device_type",
+                    help="Device Type",
+                    required=True)
 parser.add_argument("--device_id",
                     help="Device ID",
                     required=True)
@@ -32,11 +41,12 @@ if args.ssl:
 ######################
 host = args.host
 port = args.port
+device_type = args.device_type
 device_id = args.device_id
-topic_sub = '/dest_led/'+str(device_id)+'/cmd'
-topic_pub = '/dest_led/'+str(device_id)+'/cmdexe'
-username = 'dest_led'
-password = 'dest_led_0GC'
+topic_sub = '/{}/{}/cmd'.format(device_type, device_id)
+topic_pub = '/{}/{}/cmdexe'.format(device_type, device_id)
+username = args.username
+password = args.password
 cacrt = args.key_file
 client = mqtt.Client(protocol=mqtt.MQTTv311)
 Connected = False
