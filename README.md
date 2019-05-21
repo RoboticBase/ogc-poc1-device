@@ -2,6 +2,8 @@
 
 In this project, Raspbery pi LED and button communicate with fiware via MQTT.
 
+[![TravisCI Status](https://travis-ci.org/RoboticBase/ogc-poc1-device.svg?branch=master)](https://travis-ci.org/RoboticBase/ogc-poc1-device)
+
 ## Getting Started
 
 ### Run dest_button
@@ -28,4 +30,4 @@ $ nohup  ./entrance_button.py --host 'mqtt.host.jp' --port 8883 --ssl --key_file
 [Apache License 2.0](/LICENSE)
 
 ## Copyright
-Copyright (c) 2018 TIS Inc.
+Copyright (c) 2018-2019 TIS Inc.
