@@ -31,6 +31,9 @@ parser.add_argument("--device_type",
 parser.add_argument("--device_id",
                     help="Device ID",
                     required=True)
+parser.add_argument("--pushed_payload",
+                    help="Pushed Payload",
+                    default='pushed')
 args = parser.parse_args()
 print("Connecting to " + args.host + ":" + str(args.port))
 if args.ssl:
@@ -82,7 +85,7 @@ def sensor():
     if GPIO.input(BTN_PIN) == GPIO.HIGH:
         tzinfo = datetime.timezone(datetime.timedelta(hours=9))
         date = datetime.datetime.now().replace(tzinfo=tzinfo).isoformat()
-        payload = date+'|arrival|'+date
+        payload = '{}|{}|{}'.format(date, args.pushed_payload, date)
         client.publish(topic, payload)
         print("pushed")
         GPIO.output(LED_PIN, GPIO.HIGH)
