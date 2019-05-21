@@ -5,4 +5,4 @@ services:
 before_install:
   - docker build -t roboticbase/ogc-poc1-device .
 script:
-  - docker run roboticbase/ogc-poc1-device /bin/bash -c "pip3 install -r requirements/develop.txt;python3 -m unittest discover tests"
+  - docker run roboticbase/ogc-poc1-device /bin/bash -c "pip3 install -r requirements/develop.txt;python3 -m unittest discover tests;flake8 ./"

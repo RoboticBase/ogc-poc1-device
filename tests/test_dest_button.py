@@ -5,40 +5,12 @@ import freezegun
 import datetime
 
 
-from mock import patch, MagicMock
+from mock import patch
 
-from parameterized import parameterized, param
+from parameterized import parameterized
 
-LED_PIN = 26
-BTN_PIN = 5
-HOST = 'test_host'
-PORT = 1883
-PUSHED_PAYLOAD = 'pushed'
-DEVICE_TYPE = 'robot'
-DEVICE_ID = 'robot01'
-
-MockRPi = MagicMock()
-MockTime = MagicMock()
-MockArgparse = MagicMock()
-MockArgumentParser = MagicMock()
-MockArg = MagicMock()
-MockArg.host = HOST
-MockArg.port = PORT
-MockArg.device_type = DEVICE_TYPE
-MockArg.device_id = DEVICE_ID
-MockArg.pushed_payload = PUSHED_PAYLOAD
-
-MockArgparse.ArgumentParser.return_value = MockArgumentParser
-MockArgumentParser.parse_args.return_value = MockArg
-
-modules = {
-    "RPi": MockRPi,
-    "RPi.GPIO": MockRPi.GPIO,
-    "time": MockTime,
-    "argparse": MockArgparse,
-}
-patcher = patch.dict("sys.modules", modules)
-patcher.start()
+from module_mock import (LED_PIN, BTN_PIN, PUSHED_PAYLOAD,
+                         DEVICE_ID, DEVICE_TYPE, MockTime)
 
 from src import dest_button
 
@@ -54,8 +26,9 @@ class TestDestButton(unittest.TestCase):
         mocked_GPIO.setup.assert_any_call(LED_PIN, mocked_GPIO.OUT)
         mocked_GPIO.setup.assert_any_call(BTN_PIN, mocked_GPIO.IN)
         self.assertEqual(mocked_client.on_connect, dest_button.on_connect)
-        self.assertEqual(mocked_client.on_disconnect, dest_button.on_disconnect)
-       
+        self.assertEqual(mocked_client.on_disconnect,
+                         dest_button.on_disconnect)
+
     @parameterized.expand([(1, False), (0, True)])
     def test_on_connect(self, mocked_client, mocked_GPIO, rc, is_connected):
         dest_button.on_connect(mocked_client, None, 0, rc)
