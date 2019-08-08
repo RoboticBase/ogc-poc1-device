@@ -187,8 +187,8 @@ def on_disconnect(client, userdata, rc=0):
 
 
 def setup():
+    client.username_pw_set(username, password=password)
     if args.ssl:
-        client.username_pw_set(username, password=password)
         client.tls_set(cacrt, tls_version=ssl.PROTOCOL_TLSv1_1)
         client.tls_insecure_set(True)
     client.on_connect = on_connect

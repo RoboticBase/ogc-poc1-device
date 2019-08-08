@@ -98,8 +98,8 @@ def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(LED_PIN, GPIO.OUT)
     GPIO.setup(BTN_PIN, GPIO.IN)
+    client.username_pw_set(username, password=password)
     if args.ssl:
-        client.username_pw_set(username, password=password)
         client.tls_set(cacrt, tls_version=ssl.PROTOCOL_TLSv1_1)
         client.tls_insecure_set(True)
     client.on_connect = on_connect
